@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Transaksi Sewa — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <div id="navbarMount"></div>
+
+  <div class="app-container-md">
+    <div class="page-header">
+      <h1>Riwayat Transaksi Sewa</h1>
+      <p>Pantau status sewa barang Anda</p>
+    </div>
+
+    <!-- Transaction Card -->
+    <div class="card" style="border-left: 4px solid var(--blue-600); margin-bottom: 24px;">
+      <span class="badge badge-yellow" id="statusSewa" style="margin-bottom: 12px;">Menunggu COD & Konfirmasi OTP</span>
+      
+      <h3 id="txNamaBarang" style="font-size: 18px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">Memuat nama barang...</h3>
+      
+      <div style="display: grid; gap: 10px; font-size: 14px; color: var(--slate-600);">
+        <div style="display: flex; justify-content: space-between;">
+          <span>Durasi Peminjaman</span>
+          <strong id="txDurasi" style="color: var(--slate-800);">1 Hari</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Total Biaya Sewa</span>
+          <strong id="txBiaya" style="color: var(--slate-800);">Rp0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Dana Jaminan (Deposit 25%)</span>
+          <strong id="txDeposit" style="color: var(--blue-600);">Rp0</strong>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--slate-200); margin: 4px 0;">
+        <div style="display: flex; justify-content: space-between;">
+          <span>Pemberi Sewa</span>
+          <strong id="txOwner" style="color: var(--slate-800);">-</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Lokasi Perjanjian</span>
+          <strong style="color: var(--slate-800);">Lobi FST UIN Jakarta</strong>
+        </div>
+      </div>
+
+      <!-- OTP Section with Upload -->
+      <div id="otpSection" style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--slate-200);">
+        <label style="font-size: 13px; font-weight: 600; color: var(--slate-700); display: block; margin-bottom: 8px;">Masukkan Kode OTP dari pemilik saat serah terima:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+          <input type="text" id="otpInput" class="form-input" placeholder="1234" maxlength="4" style="max-width: 120px; text-align: center; font-weight: 700; font-size: 18px; letter-spacing: 4px;">
+          <button class="btn btn-primary" onclick="verifikasiOtp()">Verifikasi</button>
+        </div>
+
+        <!-- Upload Foto/Video SEBELUM Sewa (Wajib) -->
+        <div style="margin-top: 16px; padding: 16px; background: var(--blue-50); border-radius: var(--radius-lg); border: 1px solid var(--blue-200);">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--blue-800); margin-bottom: 8px;">
+            📸 Upload Kondisi Barang Sebelum Disewakan <span style="color: var(--danger);">*</span>
+          </h4>
+          <p style="font-size: 12px; color: var(--slate-500); margin-bottom: 12px;">Foto dan video kondisi barang saat ini sebagai bukti sebelum pemakaian (wajib)</p>
+          
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Upload Foto Barang <span style="color: var(--danger);">*</span></label>
+            <div class="file-upload-area" onclick="document.getElementById('fotoSebelum').click()" id="fotoSebelumArea">
+              <div class="file-upload-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div class="file-upload-text"><strong>Klik untuk upload</strong> foto kondisi barang</div>
+            </div>
+            <input type="file" id="fotoSebelum" accept="image/*" style="display:none" onchange="previewUpload(this, 'fotoSebelumArea')">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Upload Video Barang <span style="color: var(--danger);">*</span></label>
+            <div class="file-upload-area" onclick="document.getElementById('videoSebelum').click()" id="videoSebelumArea">
+              <div class="file-upload-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              </div>
+              <div class="file-upload-text"><strong>Klik untuk upload</strong> video kondisi barang</div>
+            </div>
+            <input type="file" id="videoSebelum" accept="video/*" style="display:none" onchange="previewUpload(this, 'videoSebelumArea', true)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Return & Validation Section (hidden initially) -->
+      <div id="returnSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--slate-200);">
+        <button class="btn btn-primary btn-block btn-lg" onclick="kembalikanBarang()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Kembalikan Barang
+        </button>
+      </div>
+
+      <!-- Validation Upload Section (hidden initially) -->
+      <div id="validationSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--slate-200);">
+        <div style="padding: 16px; background: var(--warning-light); border-radius: var(--radius-lg); border: 1px solid #fde68a;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--warning); margin-bottom: 8px;">
+            📋 Upload Kondisi Barang Setelah Disewakan <span style="color: var(--danger);">*</span>
+          </h4>
+          <p style="font-size: 12px; color: var(--slate-500); margin-bottom: 12px;">Foto dan video kondisi barang saat pengembalian sebagai bukti validasi (wajib)</p>
+          
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Upload Foto Barang <span style="color: var(--danger);">*</span></label>
+            <div class="file-upload-area" onclick="document.getElementById('fotoSesudah').click()" id="fotoSesudahArea">
+              <div class="file-upload-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div class="file-upload-text"><strong>Klik untuk upload</strong> foto kondisi barang</div>
+            </div>
+            <input type="file" id="fotoSesudah" accept="image/*" style="display:none" onchange="previewUpload(this, 'fotoSesudahArea')">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Upload Video Barang <span style="color: var(--danger);">*</span></label>
+            <div class="file-upload-area" onclick="document.getElementById('videoSesudah').click()" id="videoSesudahArea">
+              <div class="file-upload-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              </div>
+              <div class="file-upload-text"><strong>Klik untuk upload</strong> video kondisi barang</div>
+            </div>
+            <input type="file" id="videoSesudah" accept="video/*" style="display:none" onchange="previewUpload(this, 'videoSesudahArea', true)">
+          </div>
+
+          <button class="btn btn-success btn-block btn-lg" onclick="submitValidation()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Konfirmasi Pengembalian
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction Timeline -->
+    <div class="card">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 20px;">Alur Transaksi Sewa</h3>
+      
+      <div class="timeline" id="timeline">
+        <div class="timeline-step active" id="timelineStep1">
+          <div class="timeline-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="timeline-title">Verifikasi OTP & Upload Bukti</div>
+          <div class="timeline-desc">Konfirmasi serah terima barang dengan kode OTP dan upload foto/video</div>
+        </div>
+
+        <div class="timeline-step" id="timelineStep2">
+          <div class="timeline-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="timeline-title">Sedang Proses Sewa</div>
+          <div class="timeline-desc">Barang sedang dalam masa pinjam Anda</div>
+        </div>
+
+        <div class="timeline-step" id="timelineStep3">
+          <div class="timeline-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="timeline-title">Validasi & Upload Bukti Pengembalian</div>
+          <div class="timeline-desc">Upload foto/video kondisi barang saat pengembalian</div>
+        </div>
+
+        <div class="timeline-step" id="timelineStep4">
+          <div class="timeline-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="timeline-title">Barang Telah Dikembalikan</div>
+          <div class="timeline-desc">Deposit dikembalikan, transaksi selesai</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <a href="dashboard.html" class="btn btn-outline">Kembali ke Dashboard</a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const nama = localStorage.getItem('checkout_nama') || "Kamera DSLR Canon EOS 700D";
+    const durasi = localStorage.getItem('checkout_durasi') || "1";
+    const totalSewa = parseInt(localStorage.getItem('checkout_total_sewa')) || 50000;
+    const deposit = parseInt(localStorage.getItem('checkout_deposit')) || Math.round(totalSewa * 0.25);
+    const owner = localStorage.getItem('checkout_owner') || "Aprillia (Teknik Informatika)";
+
+    const ownerName = owner.split('/')[0].trim();
+
+    document.getElementById('txNamaBarang').innerText = nama;
+    document.getElementById('txDurasi').innerText = durasi + ' Hari';
+    document.getElementById('txBiaya').innerText = 'Rp' + totalSewa.toLocaleString('id-ID');
+    document.getElementById('txDeposit').innerText = 'Rp' + deposit.toLocaleString('id-ID');
+    document.getElementById('txOwner').innerText = ownerName;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar({ showSearch: false });
+    });
+
+    function previewUpload(input, areaId, isVideo = false) {
+      const area = document.getElementById(areaId);
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        area.classList.add('has-file');
+        
+        if (isVideo) {
+          area.innerHTML = `
+            <div class="file-upload-icon" style="color: var(--success);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="file-upload-text" style="color: var(--success); font-weight: 600;">
+              ✅ ${file.name}
+            </div>
+          `;
+        } else {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            area.innerHTML = `
+              <img src="${e.target.result}" class="file-preview" alt="Preview">
+              <div class="file-upload-text" style="color: var(--success); font-weight: 600; margin-top: 8px;">
+                ✅ ${file.name}
+              </div>
+            `;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+
+    function verifikasiOtp() {
+      const input = document.getElementById('otpInput').value;
+      const fotoSebelum = document.getElementById('fotoSebelum').files.length;
+      const videoSebelum = document.getElementById('videoSebelum').files.length;
+
+      if (input.length !== 4) {
+        showToast('Masukkan 4 digit OTP dengan benar', 'error');
+        return;
+      }
+
+      if (!fotoSebelum) {
+        showToast('Upload foto kondisi barang sebelum sewa (wajib)', 'error');
+        return;
+      }
+
+      if (!videoSebelum) {
+        showToast('Upload video kondisi barang sebelum sewa (wajib)', 'error');
+        return;
+      }
+
+      showToast('Verifikasi berhasil! OTP valid. Bukti kondisi barang tersimpan. Status sewa kini AKTIF.', 'success');
+
+      const badge = document.getElementById('statusSewa');
+      badge.textContent = 'Sewa Sedang Berjalan';
+      badge.className = 'badge badge-blue';
+
+      document.getElementById('otpSection').style.display = 'none';
+      document.getElementById('returnSection').style.display = 'block';
+
+      updateTimeline(2);
+    }
+
+    function kembalikanBarang() {
+      showToast('Silakan upload bukti kondisi barang untuk validasi pengembalian', 'info');
+      
+      updateTimeline(3);
+
+      const badge = document.getElementById('statusSewa');
+      badge.textContent = 'Validasi Barang';
+      badge.className = 'badge badge-yellow';
+
+      document.getElementById('returnSection').style.display = 'none';
+      document.getElementById('validationSection').style.display = 'block';
+    }
+
+    function submitValidation() {
+      const fotoSesudah = document.getElementById('fotoSesudah').files.length;
+      const videoSesudah = document.getElementById('videoSesudah').files.length;
+
+      if (!fotoSesudah) {
+        showToast('Upload foto kondisi barang setelah sewa (wajib)', 'error');
+        return;
+      }
+
+      if (!videoSesudah) {
+        showToast('Upload video kondisi barang setelah sewa (wajib)', 'error');
+        return;
+      }
+
+      showToast('Bukti pengembalian diupload. Memproses validasi...', 'info');
+
+      setTimeout(() => {
+        updateTimeline(4);
+        const badge = document.getElementById('statusSewa');
+        badge.textContent = 'Transaksi Selesai';
+        badge.className = 'badge badge-green';
+        
+        document.getElementById('validationSection').innerHTML = `
+          <div style="text-align: center; padding: 16px; background: var(--success-light); border-radius: var(--radius-lg);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="margin-bottom: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <p style="font-size: 14px; font-weight: 600; color: var(--success); margin: 0;">Barang berhasil dikembalikan. Deposit Rp${deposit.toLocaleString('id-ID')} telah dikembalikan ke akun Anda.</p>
+          </div>
+        `;
+
+        showToast('Barang dikembalikan! Deposit sudah dikembalikan ke akun Anda.', 'success');
+      }, 2000);
+    }
+
+    function updateTimeline(activeStep) {
+      for (let i = 1; i <= 4; i++) {
+        const step = document.getElementById(`timelineStep${i}`);
+        step.classList.remove('completed', 'active');
+        if (i < activeStep) {
+          step.classList.add('completed');
+        } else if (i === activeStep) {
+          step.classList.add('active');
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>

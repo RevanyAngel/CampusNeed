@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pembayaran — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <div id="navbarMount"></div>
+
+  <div class="app-container-md">
+    <!-- Back Button -->
+    <div style="margin-bottom: 16px;">
+      <a href="javascript:history.back()" style="display: inline-flex; align-items: center; gap: 6px; color: var(--slate-500); font-size: 14px; font-weight: 500; transition: color 0.2s;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali
+      </a>
+    </div>
+
+    <div class="page-header">
+      <h1>Pembayaran</h1>
+      <p>Lengkapi detail pembayaran untuk menyelesaikan pesanan</p>
+    </div>
+
+    <div class="card mb-24" id="orderSummary">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Delivery Method (for preloved) -->
+    <div class="card mb-24" id="deliverySection" style="display: none;">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" style="vertical-align: -3px; margin-right: 6px;"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Metode Pengiriman
+      </h3>
+
+      <div id="codOption" class="kurir-option" onclick="selectDelivery('cod')">
+        <input type="radio" name="delivery" value="cod" id="radioCod">
+        <div>
+          <div class="kurir-name">COD (Cash on Delivery)</div>
+          <div class="kurir-estimate">Ketemu langsung di kampus</div>
+        </div>
+        <div class="kurir-cost" style="color: var(--success);">GRATIS</div>
+      </div>
+
+      <div style="margin: 12px 0; font-size: 13px; font-weight: 600; color: var(--slate-400); text-transform: uppercase; letter-spacing: 1px;">Atau pilih kurir</div>
+
+      <div id="kurirList">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <!-- Payment Summary -->
+    <div class="card mb-24" id="paymentSummary">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Payment Method -->
+    <div class="card mb-24">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" style="vertical-align: -3px; margin-right: 6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Metode Pembayaran
+      </h3>
+      <div class="form-group">
+        <select class="form-select" id="paymentMethod">
+          <option value="dana">DANA</option>
+          <option value="gopay">GoPay</option>
+          <option value="ovo">OVO</option>
+          <option value="shopeepay">ShopeePay</option>
+          <option value="transfer">Transfer Bank</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-outline btn-lg" onclick="history.back()" style="flex: 1;">Batalkan</button>
+      <button class="btn btn-primary btn-lg" id="payBtn" onclick="processPayment()" style="flex: 2;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Bayar Sekarang
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <p style="font-size: 15px;">Memproses pembayaran...</p>
+  </div>
+
+  <div id="cartMount"></div>
+
+  <script src="app.js"></script>
+  <script>
+    let selectedDelivery = null;
+    let deliveryCost = 0;
+    const checkoutType = localStorage.getItem('checkout_type') || 'preloved';
+    const codAvailable = localStorage.getItem('checkout_cod') === 'true';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar();
+      document.getElementById('cartMount').innerHTML = renderCartSidebar();
+
+      renderOrderSummary();
+      renderDeliveryOptions();
+      renderPaymentSummary();
+    });
+
+    function renderOrderSummary() {
+      const summary = document.getElementById('orderSummary');
+
+      if (checkoutType === 'sewa') {
+        const nama = localStorage.getItem('checkout_nama') || 'Produk Sewa';
+        const durasi = localStorage.getItem('checkout_durasi') || 1;
+        const totalSewa = parseInt(localStorage.getItem('checkout_total_sewa') || 0);
+        const deposit = parseInt(localStorage.getItem('checkout_deposit') || 0);
+
+        summary.innerHTML = `
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">Ringkasan Pesanan</h3>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+            <span>${nama}</span>
+            <span>${durasi} hari</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+            <span>Total Sewa</span>
+            <span style="font-weight: 600;">Rp${totalSewa.toLocaleString('id-ID')}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+            <span>Deposit Jaminan (25%)</span>
+            <span style="font-weight: 600;">Rp${deposit.toLocaleString('id-ID')}</span>
+          </div>
+        `;
+      } else {
+        const nama = localStorage.getItem('preloved_nama') || 'Produk Preloved';
+        const harga = parseInt(localStorage.getItem('preloved_harga') || 0);
+
+        summary.innerHTML = `
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">Ringkasan Pesanan</h3>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+            <span>${nama}</span>
+            <span style="font-weight: 600;">Rp${harga.toLocaleString('id-ID')}</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderDeliveryOptions() {
+      if (checkoutType === 'sewa') return; // sewa = always COD
+
+      const section = document.getElementById('deliverySection');
+      section.style.display = 'block';
+
+      // Handle COD availability
+      const codEl = document.getElementById('codOption');
+      if (!codAvailable) {
+        codEl.classList.add('disabled');
+        codEl.innerHTML += '<div style="font-size: 11px; color: var(--danger); margin-top: 4px;">Penjual tidak mengaktifkan COD</div>';
+      }
+
+      // Render kurir list
+      const kurirContainer = document.getElementById('kurirList');
+      kurirContainer.innerHTML = KurirList.map(k => `
+        <div class="kurir-option" onclick="selectDelivery('${k.id}', ${k.cost})">
+          <input type="radio" name="delivery" value="${k.id}">
+          <div>
+            <div class="kurir-name">${k.name}</div>
+            <div class="kurir-estimate">Estimasi ${k.estimate}</div>
+          </div>
+          <div class="kurir-cost">Rp${k.cost.toLocaleString('id-ID')}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectDelivery(id, cost = 0) {
+      selectedDelivery = id;
+      deliveryCost = cost;
+
+      // Update active state
+      document.querySelectorAll('.kurir-option').forEach(el => el.classList.remove('active'));
+      const radio = document.querySelector(`input[value="${id}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.kurir-option').classList.add('active');
+      }
+
+      renderPaymentSummary();
+    }
+
+    function renderPaymentSummary() {
+      const summaryEl = document.getElementById('paymentSummary');
+      let subtotal = 0;
+
+      if (checkoutType === 'sewa') {
+        const totalSewa = parseInt(localStorage.getItem('checkout_total_sewa') || 0);
+        const deposit = parseInt(localStorage.getItem('checkout_deposit') || 0);
+        subtotal = totalSewa + deposit;
+      } else {
+        subtotal = parseInt(localStorage.getItem('preloved_harga') || 0);
+      }
+
+      const biayaLayanan = BIAYA_LAYANAN;
+      const total = subtotal + deliveryCost + biayaLayanan;
+
+      summaryEl.innerHTML = `
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">Rincian Pembayaran</h3>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+          <span>Subtotal</span>
+          <span>Rp${subtotal.toLocaleString('id-ID')}</span>
+        </div>
+        ${checkoutType !== 'sewa' ? `
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+          <span>Ongkir ${selectedDelivery === 'cod' ? '(COD)' : selectedDelivery ? '(' + (KurirList.find(k => k.id === selectedDelivery)?.name || '') + ')' : '— belum dipilih'}</span>
+          <span>${selectedDelivery === 'cod' ? '<span style="color: var(--success); font-weight: 600;">GRATIS</span>' : 'Rp' + deliveryCost.toLocaleString('id-ID')}</span>
+        </div>
+        ` : ''}
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--slate-600);">
+          <span>Biaya Layanan</span>
+          <span>Rp${biayaLayanan.toLocaleString('id-ID')}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; margin-top: 8px; border-top: 2px solid var(--slate-200); font-size: 18px; font-weight: 700; color: var(--slate-900);">
+          <span>Total</span>
+          <span style="background: linear-gradient(135deg, var(--blue-700), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Rp${total.toLocaleString('id-ID')}</span>
+        </div>
+      `;
+    }
+
+    function processPayment() {
+      // Validate delivery for preloved
+      if (checkoutType !== 'sewa' && !selectedDelivery) {
+        showToast('Silakan pilih metode pengiriman terlebih dahulu', 'error');
+        return;
+      }
+
+      const loader = document.getElementById('loader');
+      loader.classList.add('show');
+
+      setTimeout(() => {
+        loader.classList.remove('show');
+
+        // Save order to history
+        const orderData = {
+          productName: checkoutType === 'sewa'
+            ? localStorage.getItem('checkout_nama')
+            : localStorage.getItem('preloved_nama'),
+          type: checkoutType,
+          status: 'dikemas',
+          delivery: selectedDelivery || 'cod',
+          total: calculateTotal()
+        };
+        OrderHistory.add(orderData);
+
+        // Clear cart
+        Cart.clear();
+
+        // Redirect
+        if (checkoutType === 'sewa') {
+          window.location.href = 'transaksi-sewa.html';
+        } else {
+          window.location.href = 'transaksi-preloved.html';
+        }
+      }, 2500);
+    }
+
+    function calculateTotal() {
+      let subtotal = 0;
+      if (checkoutType === 'sewa') {
+        subtotal = parseInt(localStorage.getItem('checkout_total_sewa') || 0)
+                 + parseInt(localStorage.getItem('checkout_deposit') || 0);
+      } else {
+        subtotal = parseInt(localStorage.getItem('preloved_harga') || 0);
+      }
+      return subtotal + deliveryCost + BIAYA_LAYANAN;
+    }
+  </script>
+
+</body>
+</html>

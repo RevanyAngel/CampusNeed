@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusNeed — Platform Sewa & Jual Barang Mahasiswa</title>
+  <meta name="description"
+    content="Marketplace hyperlocal khusus mahasiswa UIN Jakarta. Sewa perangkat tugas, jual barang kos saat lulus — aman dengan verifikasi KTM dan sistem Escrow." />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- =====================================================
+       NAVBAR
+       ===================================================== -->
+  <nav>
+    <div class="nav-inner">
+
+      <!-- Logo Menggunakan File Gambar Asli -->
+      <a href="#" class="logo">
+        <img src="logo-tr.png" alt="Logo CampusNeed" class="logo-img" />
+        <span class="logo-text">Campus<span>Need</span></span>
+      </a>
+
+      <!-- Menu Navigasi -->
+      <ul class="nav-links">
+        <li><a href="#home">Beranda</a></li>
+        <li><a href="#fitur">Fitur</a></li>
+        <li><a href="#keamanan">Keamanan</a></li>
+        <li><a href="#unggul">Keunggulan</a></li>
+        <li><a href="#alur">Cara Kerja</a></li>
+        <li><a href="login.html" class="btn-login-nav">Masuk</a></li>
+        <li><a href="daftar.html" onclick="window.location.href='daftar.html';" class="btn-nav">Daftar Sekarang</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+
+
+  <!-- =====================================================
+       HERO
+       ===================================================== -->
+  <section class="hero" id="home">
+    <!-- Floating Shapes -->
+    <div class="hero-floating-shapes">
+      <div class="floating-shape"></div>
+      <div class="floating-shape"></div>
+      <div class="floating-shape"></div>
+    </div>
+
+    <div class="hero-inner">
+
+      <div class="hero-content">
+        <!-- Badge -->
+        <!-- <div class="hero-badge">✨ Platform Mahasiswa UIN Jakarta</div> -->
+
+        <h1>Sewa & Jual Barang <span>Kampus</span> Lebih Mudah</h1>
+
+        <p>
+          Marketplace hyperlocal khusus mahasiswa. Sewa perangkat
+          tugas, jual barang kos saat lulus — aman dengan verifikasi KTM dan
+          sistem Escrow.
+        </p>
+
+        <div class="hero-cta">
+          <a href="daftar.html" onclick="window.location.href='daftar.html';" class="btn-primary">Mulai Sekarang</a>
+          <a href="#fitur" class="btn-secondary">Lihat Fitur</a>
+        </div>
+
+        <!-- Stats with counter animation -->
+        <div class="hero-stats-row">
+          <div class="stat-item">
+            <h3 data-target="50+">50+</h3>
+            <p>Produk aktif hari ini</p>
+          </div>
+          <div class="stat-item">
+            <h3 data-target="100%">100%</h3>
+            <p>Pengguna terverifikasi KTM</p>
+          </div>
+          <!-- <div class="stat-item">
+            <h3 data-target="0%">0%</h3>
+            <p>Ongkir — COD di kampus</p>
+          </div> -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: MASALAH
+       ===================================================== -->
+  <section class="problem" id="masalah">
+    <div class="section-inner">
+      <div class="section-label">Kenapa CampusNeed?</div>
+      <h2 class="section-title">Masalah nyata mahasiswa<br>yang belum terselesaikan</h2>
+      <p class="section-sub">
+        Dari keterbatasan perangkat tugas hingga kebingungan saat lulus
+        ada celah besar yang belum diisi marketplace biasa.
+      </p>
+
+      <!-- Card masalah — diisi JavaScript -->
+      <div class="problem-grid" id="problem-grid"></div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: FITUR (Modul Rent & Sell)
+       ===================================================== -->
+  <section class="how" id="fitur">
+    <div class="section-inner">
+      <div class="section-label">Dua Modul Utama</div>
+      <h2 class="section-title">Satu platform,<br>dua solusi lengkap</h2>
+      <p class="section-sub">
+        Tidak perlu pindah-pindah aplikasi. Rent dan Preloved terintegrasi
+        dalam satu ekosistem yang aman.
+      </p>
+
+      <div class="modules-wrap">
+
+        <!-- Card: Modul Sewa -->
+        <div class="module-card rent reveal">
+          <span class="module-tag">Modul Sewa (Rent)</span>
+          <h3>Pinjam kapan butuh,<br>hemat lebih banyak</h3>
+          <p>
+            Akses perangkat berkualitas tanpa harus beli. Sewa kamera, laptop,
+            proyektor — dari mahasiswa sekitar kampus dengan harga komunitas.
+          </p>
+          <!-- Fitur sewa — diisi JavaScript -->
+          <ul class="feature-list" id="rent-features"></ul>
+        </div>
+
+        <!-- Card: Modul Jual -->
+        <div class="module-card sell reveal">
+          <span class="module-tag">Modul Jual (Preloved)</span>
+          <h3>Likuidasi aset kos<br>dengan harga wajar</h3>
+          <p>
+            Jangan jual murah ke pengepul. Tawarkan barang kosmu langsung ke
+            mahasiswa baru yang memang membutuhkan, dengan harga komunitas
+            yang lebih fair.
+          </p>
+          <!-- Fitur jual — diisi JavaScript -->
+          <ul class="feature-list" id="sell-features"></ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: KEAMANAN
+       ===================================================== -->
+  <section class="security" id="keamanan">
+    <div class="section-inner">
+      <div class="section-label">Sistem Keamanan</div>
+      <h2 class="section-title">Transaksi aman berlapis,<br>bukan sekadar janji</h2>
+      <p class="section-sub">
+        Empat lapis proteksi yang memastikan aset dan uangmu
+        terlindungi di setiap transaksi.
+      </p>
+
+      <!-- Card keamanan — diisi JavaScript -->
+      <div class="security-grid" id="security-grid"></div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: USP (Keunggulan Kompetitif)
+       ===================================================== -->
+  <section class="usp" id="unggul">
+    <div class="section-inner">
+      <div class="section-label">Keunggulan Kompetitif</div>
+      <h2 class="section-title">Tiga hal yang tidak bisa<br>kamu temukan di marketplace lain</h2>
+      <p class="section-sub">
+        CampusNeed bukan marketplace biasa — ini ekosistem yang dirancang
+        khusus untuk komunitas akademis.
+      </p>
+
+      <!-- Card USP — diisi JavaScript -->
+      <div class="usp-grid" id="usp-grid"></div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: ALUR / CARA KERJA
+       ===================================================== -->
+  <section class="flow" id="alur">
+    <div class="section-inner">
+      <div class="section-label">Cara Kerja</div>
+      <h2 class="section-title">Dari daftar sampai transaksi<br>selesai dalam 4 langkah</h2>
+      <p class="section-sub">
+        Prosesnya sederhana dan sepenuhnya digital —
+        tidak perlu datang ke kantor atau antri.
+      </p>
+
+      <!-- Langkah-langkah — diisi JavaScript -->
+      <div class="flow-steps" id="flow-steps"></div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: TIM
+       ===================================================== -->
+  <section class="team">
+    <div class="section-inner">
+      <div class="section-label" style="text-align: center; display: block;">Tim Pengembang</div>
+      <h2 class="section-title" style="text-align: center;">
+        Dibangun oleh mahasiswa,<br>untuk mahasiswa
+      </h2>
+      <p class="section-sub" style="text-align: center; margin: 0 auto 0;">
+        Program Studi Teknik Informatika, FST UIN Syarif Hidayatullah Jakarta
+      </p>
+
+      <!-- Card tim — diisi JavaScript -->
+      <div class="team-grid" id="team-grid"></div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       SECTION: CTA (Call to Action)
+       ===================================================== -->
+  <section class="cta-section" id="daftar">
+    <div style="position: relative; z-index: 1;">
+      <h2>Siap bergabung dengan<br>ekosistem kampus <span>lebih cerdas</span>?</h2>
+      <p>
+        Jadilah yang pertama saat CampusNeed hadir di universitas kamu.<br>
+        Tidak ada ongkir. Tidak ada penipuan. Hanya sesama mahasiswa yang saling bantu.
+      </p>
+      <div class="cta-btns">
+        <a href="daftar.html" onclick="window.location.href='daftar.html';" class="btn-primary"
+          style="font-size: 16px; padding: 16px 32px;">
+          Daftar Sekarang
+        </a>
+        <a href="mailto:campusneed@example.com" class="btn-secondary" style="font-size: 16px; padding: 16px 32px;">
+          Hubungi Kami
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       FOOTER — diisi JavaScript
+       ===================================================== -->
+  <footer id="footer-text"></footer>
+
+
+  <!-- =====================================================
+       SCRIPTS
+       Urutan penting: data.js harus sebelum main.js
+       ===================================================== -->
+  <script src="data.js"></script>
+  <script src="main.js"></script>
+
+</body>
+
+</html>

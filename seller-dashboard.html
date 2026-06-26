@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Penjual — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <div id="navbarMount"></div>
+
+  <div class="app-container">
+    <div class="page-header">
+      <h1>Dashboard Penjual</h1>
+      <p>Kelola listing barang yang Anda sewakan atau jual</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-card-label">Total Listing</div>
+        <div class="stat-card-value" id="totalListing">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Listing Aktif</div>
+        <div class="stat-card-value" id="activeListing">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Total Pendapatan</div>
+        <div class="stat-card-value" id="totalRevenue">Rp0</div>
+      </div>
+    </div>
+
+    <!-- Action -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--slate-900);">Listing Barang Anda</h2>
+      <a href="tambah-barang.html" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Barang
+      </a>
+    </div>
+
+    <!-- Listings -->
+    <div id="listingsGrid" class="product-grid">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" style="display: none; text-align: center; padding: 60px 20px;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--slate-300)" stroke-width="1.5" style="margin-bottom: 16px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <h3 style="font-size: 18px; color: var(--slate-600); margin-bottom: 8px;">Belum ada listing</h3>
+      <p style="font-size: 14px; color: var(--slate-400); margin-bottom: 20px;">Mulai sewakan atau jual barang Anda ke sesama mahasiswa</p>
+      <a href="tambah-barang.html" class="btn btn-primary btn-lg">Tambah Barang Pertama</a>
+    </div>
+  </div>
+
+  <div id="cartMount"></div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar();
+      document.getElementById('cartMount').innerHTML = renderCartSidebar();
+
+      // Check if user is seller
+      if (!AppUser.isSeller()) {
+        showToast('Daftar sebagai penjual terlebih dahulu di menu Pengaturan', 'info');
+        setTimeout(() => window.location.href = 'settings.html', 2000);
+        return;
+      }
+
+      loadSellerListings();
+    });
+
+    function loadSellerListings() {
+      // Get listings from localStorage (added via tambah-barang.html)
+      const listings = JSON.parse(localStorage.getItem('campusneed_seller_listings') || '[]');
+
+      document.getElementById('totalListing').textContent = listings.length;
+      document.getElementById('activeListing').textContent = listings.length;
+
+      if (listings.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        document.getElementById('listingsGrid').style.display = 'none';
+        return;
+      }
+
+      const grid = document.getElementById('listingsGrid');
+      grid.innerHTML = listings.map(item => `
+        <div class="product-card" style="cursor: default;">
+          <div style="height: 160px; background: var(--blue-50); display: flex; align-items: center; justify-content: center; color: var(--blue-400);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div class="product-card-body">
+            <span class="product-card-badge ${item.type === 'sewa' ? 'badge-sewa' : 'badge-preloved'}">${item.type === 'sewa' ? 'Sewa' : 'Preloved'}</span>
+            <div class="product-card-title">${item.name}</div>
+            <div class="product-card-price">Rp${parseInt(item.price).toLocaleString('id-ID')} ${item.type === 'sewa' ? '/ hari' : ''}</div>
+            <div style="margin-top: 12px;">
+              <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--danger);" onclick="removeListing('${item.id}')">Hapus</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeListing(id) {
+      let listings = JSON.parse(localStorage.getItem('campusneed_seller_listings') || '[]');
+      listings = listings.filter(l => l.id !== id);
+      localStorage.setItem('campusneed_seller_listings', JSON.stringify(listings));
+      showToast('Listing dihapus', 'info');
+      loadSellerListings();
+    }
+  </script>
+
+</body>
+</html>

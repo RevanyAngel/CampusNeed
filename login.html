@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk — CampusNeed</title>
+  <meta name="description" content="Masuk ke akun CampusNeed Anda. Marketplace sewa dan jual barang khusus mahasiswa." />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: var(--slate-50);
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 440px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .login-logo img {
+      height: 42px;
+    }
+
+    .login-logo-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--blue-800);
+    }
+
+    .login-logo-text span {
+      color: var(--orange-600);
+    }
+
+    .login-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 40px 36px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange-600), var(--blue-800));
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--slate-500);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group:last-of-type {
+      margin-bottom: 8px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--slate-700);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--slate-800);
+      background: var(--white);
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--orange-600);
+      box-shadow: 0 0 0 4px rgba(255, 130, 58, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--slate-400);
+    }
+
+    .input-icon-wrap {
+      position: relative;
+    }
+
+    .input-icon-wrap .form-input {
+      padding-left: 44px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-400);
+      pointer-events: none;
+      transition: color 0.3s;
+    }
+
+    .input-icon-wrap .form-input:focus ~ .input-icon,
+    .input-icon-wrap .form-input:focus + .input-icon {
+      color: var(--orange-600);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--slate-400);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+
+    .password-toggle:hover {
+      color: var(--orange-600);
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 28px;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--slate-600);
+      font-weight: 500;
+    }
+
+    .remember-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--orange-600);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--orange-600);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .forgot-link:hover {
+      color: #e06b2a;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--orange-600), #e06b2a);
+      color: white;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .btn-login:hover::before {
+      left: 100%;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255, 130, 58, 0.4);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--slate-200);
+    }
+
+    .divider span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .register-link {
+      text-align: center;
+      font-size: 14px;
+      color: var(--slate-600);
+    }
+
+    .register-link a {
+      color: var(--orange-600);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .register-link a:hover {
+      color: #e06b2a;
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--blue-600);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: var(--blue-800);
+    }
+
+    /* Error shake animation */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    .form-error {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 6px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <!-- Logo -->
+    <div class="login-logo">
+      <a href="index.html">
+        <img src="logo-tr.png" alt="CampusNeed" />
+        <span class="login-logo-text">Campus<span>Need</span></span>
+      </a>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card" id="loginCard">
+      <h2 class="login-title">Selamat Datang Kembali</h2>
+      <p class="login-subtitle">Masuk ke akun CampusNeed Anda</p>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Kampus</label>
+          <div class="input-icon-wrap">
+            <input type="email" id="loginEmail" class="form-input" placeholder="nama@apps.uinjkt.ac.id" required autocomplete="email" />
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <p class="form-error" id="emailError">Email tidak ditemukan</p>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <div class="input-icon-wrap">
+            <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan password" required autocomplete="current-password" style="padding-right: 44px;" />
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <button type="button" class="password-toggle" onclick="togglePassword()" id="togglePwdBtn" title="Tampilkan password">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eyeIcon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="form-error" id="passwordError">Password salah</p>
+        </div>
+
+        <!-- Remember + Forgot -->
+        <div class="remember-row">
+          <label class="remember-label">
+            <input type="checkbox" id="rememberMe" />
+            Ingat saya
+          </label>
+          <a href="#" class="forgot-link" onclick="showForgotMessage(event)">Lupa password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-login" id="loginBtn">Masuk</button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>Belum punya akun?</span>
+      </div>
+
+      <!-- Register Link -->
+      <div class="register-link">
+        <a href="daftar.html">Daftar Sekarang — Gratis</a>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Kembali ke Beranda</a>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container"></div>
+
+  <script>
+    // Check if user is already logged in
+    (function checkLoggedIn() {
+      const userData = localStorage.getItem('campusneed_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.nama) {
+          // Already logged in — redirect to dashboard
+          window.location.href = 'dashboard.html';
+        }
+      }
+    })();
+
+    // Toggle password visibility
+    function togglePassword() {
+      const input = document.getElementById('loginPassword');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      } else {
+        input.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    }
+
+    // Handle login
+    function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const card = document.getElementById('loginCard');
+
+      // Reset errors
+      document.getElementById('emailError').style.display = 'none';
+      document.getElementById('passwordError').style.display = 'none';
+
+      if (!email || !password) {
+        showToastLocal('Harap isi email dan password', 'error');
+        return;
+      }
+
+      // Check stored user data
+      const storedUser = localStorage.getItem('campusneed_user');
+      const storedPassword = localStorage.getItem('campusneed_password');
+
+      if (!storedUser) {
+        document.getElementById('emailError').textContent = 'Akun tidak ditemukan. Silakan daftar terlebih dahulu.';
+        document.getElementById('emailError').style.display = 'block';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 400);
+        return;
+      }
+
+      const userData = JSON.parse(storedUser);
+
+      // Check email
+      if (userData.email !== email) {
+        document.getElementById('emailError').textContent = 'Email tidak ditemukan';
+        document.getElementById('emailError').style.display = 'block';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 400);
+        return;
+      }
+
+      // Check password
+      if (storedPassword && storedPassword !== password) {
+        document.getElementById('passwordError').style.display = 'block';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 400);
+        return;
+      }
+
+      // Login successful
+      showToastLocal('Login berhasil! Mengalihkan...', 'success');
+
+      // Disable button and show loading state
+      const btn = document.getElementById('loginBtn');
+      btn.textContent = 'Memproses...';
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1200);
+    }
+
+    // Forgot password handler
+    function showForgotMessage(e) {
+      e.preventDefault();
+      showToastLocal('Fitur reset password akan segera hadir. Hubungi admin untuk bantuan.', 'info');
+    }
+
+    // Inline toast
+    function showToastLocal(message, type = 'info') {
+      let container = document.querySelector('.toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
+
+      const icons = {
+        success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+      };
+
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px 20px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+        min-width: 300px;
+        max-width: 420px;
+        animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        border-left: 4px solid ${type === 'success' ? '#16a34a' : type === 'error' ? '#dc2626' : '#004d99'};
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      `;
+      toast.innerHTML = `
+        <span style="flex-shrink: 0;">${icons[type] || icons.info}</span>
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; cursor: pointer; color: #94a3b8; padding: 4px;">&#10005;</button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Barang Preloved — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <div id="navbarMount"></div>
+
+  <div class="app-container">
+    <div class="page-header">
+      <h1>Katalog Barang Preloved</h1>
+      <p>Beli barang kos bekas layak pakai langsung dari kakak tingkatmu</p>
+    </div>
+
+    <!-- Search -->
+    <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 200px; position: relative;">
+        <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--slate-400);" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="form-input" style="padding-left: 42px;" placeholder="Cari barang preloved..." id="searchInput" oninput="filterProducts()">
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="category-row" id="categoryRow"></div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <div id="cartMount"></div>
+
+  <script src="app.js"></script>
+  <script>
+    let currentCategory = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar();
+      document.getElementById('cartMount').innerHTML = renderCartSidebar();
+
+      // Render categories (filtered to those in preloved products)
+      const preCategories = [...new Set(ProductData.preloved.map(p => p.category))];
+      const cats = Categories.filter(c => c.id === 'all' || preCategories.includes(c.id));
+      document.getElementById('categoryRow').innerHTML = cats.map(cat => `
+        <div class="category-pill ${cat.id === currentCategory ? 'active' : ''}" onclick="filterCat('${cat.id}')">
+          <div class="category-pill-icon">${cat.icon}</div>
+          <div class="category-pill-label">${cat.label}</div>
+        </div>
+      `).join('');
+
+      renderProducts();
+    });
+
+    function renderProducts() {
+      let products = ProductData.preloved.map(p => ({ ...p, type: 'preloved' }));
+
+      if (currentCategory !== 'all') {
+        products = products.filter(p => p.category === currentCategory);
+      }
+
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      if (query) {
+        products = products.filter(p =>
+          p.name.toLowerCase().includes(query) ||
+          p.owner.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query)
+        );
+      }
+
+      const grid = document.getElementById('productGrid');
+      if (products.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--slate-500);">Tidak ada produk ditemukan</div>';
+        return;
+      }
+      grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+    }
+
+    function filterCat(catId) {
+      currentCategory = catId;
+      document.querySelectorAll('.category-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.onclick.toString().includes(`'${catId}'`));
+      });
+      renderProducts();
+    }
+
+    function filterProducts() {
+      renderProducts();
+    }
+  </script>
+
+</body>
+</html>

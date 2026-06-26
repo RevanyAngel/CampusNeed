@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <div id="navbarMount"></div>
+
+  <div class="app-container-md">
+    <div class="page-header">
+      <h1>Pengaturan</h1>
+      <p>Kelola profil dan preferensi akun Anda</p>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 20px;">Edit Profil</h3>
+
+      <div class="form-group">
+        <label class="form-label" for="editNama">Nama Lengkap</label>
+        <input type="text" id="editNama" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="editNim">NIM</label>
+        <input type="text" id="editNim" class="form-input" readonly style="background: var(--slate-50); color: var(--slate-500);" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="editEmail">Email</label>
+        <input type="email" id="editEmail" class="form-input" />
+      </div>
+
+      <button class="btn btn-primary" onclick="saveProfile()">Simpan Perubahan</button>
+    </div>
+
+    <!-- Verification Status -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px;">Status Verifikasi</h3>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--success-light); border-radius: var(--radius-lg);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <div style="font-size: 14px; font-weight: 600; color: var(--success);">KYC Terverifikasi</div>
+          <div style="font-size: 13px; color: var(--slate-600);">KTP dan selfie Anda telah diverifikasi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seller Registration -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); margin-bottom: 8px;">Daftar sebagai Penjual/Penyewa</h3>
+      <p style="font-size: 14px; color: var(--slate-500); margin-bottom: 20px;">Aktifkan fitur untuk menyewakan atau menjual barang Anda ke sesama mahasiswa</p>
+
+      <div id="sellerStatusArea">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card" style="border: 1px solid var(--danger-light);">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--danger); margin-bottom: 8px;">Zona Bahaya</h3>
+      <p style="font-size: 14px; color: var(--slate-500); margin-bottom: 16px;">Tindakan ini tidak dapat dibatalkan</p>
+      <button class="btn btn-outline" style="color: var(--danger); border-color: var(--danger-light);" onclick="logoutUser()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar dari Akun
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar({ showSearch: false });
+
+      const user = AppUser.get();
+      if (user) {
+        document.getElementById('editNama').value = user.nama || '';
+        document.getElementById('editNim').value = user.nim || '';
+        document.getElementById('editEmail').value = user.email || '';
+      }
+
+      renderSellerStatus();
+    });
+
+    function renderSellerStatus() {
+      const area = document.getElementById('sellerStatusArea');
+      if (AppUser.isSeller()) {
+        area.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--blue-50); border-radius: var(--radius-lg); margin-bottom: 12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--blue-700);">Status: Aktif sebagai Penjual/Penyewa</div>
+              <div style="font-size: 13px; color: var(--slate-500);">Anda dapat mengelola listing di Dashboard Penjual</div>
+            </div>
+          </div>
+          <a href="seller-dashboard.html" class="btn btn-secondary">Buka Dashboard Penjual</a>
+        `;
+      } else {
+        area.innerHTML = `
+          <button class="btn btn-primary btn-lg" onclick="daftarSeller()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Daftar sebagai Penjual/Penyewa
+          </button>
+        `;
+      }
+    }
+
+    function saveProfile() {
+      const user = AppUser.get() || {};
+      user.nama = document.getElementById('editNama').value.trim();
+      user.email = document.getElementById('editEmail').value.trim();
+      AppUser.set(user);
+      showToast('Profil berhasil diperbarui', 'success');
+    }
+
+    function daftarSeller() {
+      AppUser.setSeller(true);
+      showToast('Selamat! Anda kini terdaftar sebagai penjual/penyewa.', 'success');
+      renderSellerStatus();
+    }
+
+    function logoutUser() {
+      AppUser.logout();
+    }
+  </script>
+
+</body>
+</html>

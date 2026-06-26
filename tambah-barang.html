@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unggah Barang Baru — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
+
+  <div style="width: 100%; max-width: 550px;">
+    <div class="card" style="padding: 36px;">
+      <h2 style="font-size: 22px; font-weight: 700; color: var(--slate-900); margin-bottom: 4px;">Unggah Barang Baru</h2>
+      <p style="font-size: 14px; color: var(--slate-500); margin-bottom: 28px;">Isi detail barang yang ingin Anda sewakan atau jual ke sesama mahasiswa</p>
+
+      <form id="formTambahBarang">
+        <div class="form-group">
+          <label class="form-label" for="jenisTransaksi">Jenis Transaksi</label>
+          <select id="jenisTransaksi" class="form-select" required>
+            <option value="sewa">Disewakan (Rent)</option>
+            <option value="preloved">Dijual (Preloved)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="namaBarang">Nama Barang</label>
+          <input type="text" id="namaBarang" class="form-input" placeholder="Contoh: Kamera Canon EOS 700D / Kipas Angin Cosmos" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" id="labelHarga" for="hargaBarang">Harga Sewa per Hari</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 14px; top: 10px; font-size: 14px; color: var(--slate-500);">Rp</span>
+            <input type="number" id="hargaBarang" class="form-input" style="padding-left: 42px;" placeholder="Contoh: 50000" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="kategori">Kategori</label>
+          <select id="kategori" class="form-select" required>
+            <option value="Gadgets">Gadgets</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Elektronik">Elektronik</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Buku">Buku</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lokasi">Patokan Lokasi COD (Area Kampus)</label>
+          <input type="text" id="lokasi" class="form-input" placeholder="Contoh: Depan FST / Kost Gg. H. Jarian" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="deskripsi">Deskripsi & Kondisi Barang</label>
+          <textarea id="deskripsi" class="form-textarea" rows="3" placeholder="Jelaskan kondisi barang, kelengkapan, minus (jika ada)..." required></textarea>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label class="form-label">Upload Gambar Barang <span style="color: var(--danger);">*</span></label>
+          <div class="file-upload-area" onclick="document.getElementById('gambarBarang').click()" id="gambarUploadArea">
+            <div class="file-upload-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="file-upload-text"><strong>Klik untuk upload</strong> gambar barang (JPG, PNG)</div>
+          </div>
+          <input type="file" id="gambarBarang" accept="image/*" style="display:none" onchange="previewImage(this)">
+        </div>
+
+        <!-- COD Toggle (for preloved) -->
+        <div class="form-group" id="codToggleGroup" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--slate-50); border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--slate-800);">Aktifkan COD</div>
+              <div style="font-size: 12px; color: var(--slate-500);">Pembeli bisa ambil langsung di kampus</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="codToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Condition (for preloved) -->
+        <div class="form-group" id="conditionGroup" style="display: none;">
+          <label class="form-label" for="kondisi">Kondisi Barang</label>
+          <select id="kondisi" class="form-select">
+            <option value="Like New">Like New — Hampir Baru</option>
+            <option value="Good">Good — Baik, ada pemakaian wajar</option>
+            <option value="Fair">Fair — Cukup, ada minus kecil</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Unggah Barang
+        </button>
+
+        <div style="margin-top: 12px; padding: 12px; background: var(--warning-light); border-radius: var(--radius-md); font-size: 12px; color: var(--warning); text-align: center;">
+          ⚠️ Barang akan ditinjau oleh admin sebelum tampil di katalog
+        </div>
+      </form>
+
+      <a href="seller-dashboard.html" style="display: block; text-align: center; margin-top: 16px; color: var(--slate-500); text-decoration: none; font-size: 14px;">Batalkan & Kembali</a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const jenisTransaksi = document.getElementById('jenisTransaksi');
+    const labelHarga = document.getElementById('labelHarga');
+    const codToggleGroup = document.getElementById('codToggleGroup');
+    const conditionGroup = document.getElementById('conditionGroup');
+
+    jenisTransaksi.addEventListener('change', function() {
+      labelHarga.innerText = this.value === 'sewa' ? 'Harga Sewa per Hari' : 'Harga Jual Putus';
+      codToggleGroup.style.display = this.value === 'preloved' ? 'block' : 'none';
+      conditionGroup.style.display = this.value === 'preloved' ? 'block' : 'none';
+    });
+
+    function previewImage(input) {
+      const area = document.getElementById('gambarUploadArea');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          area.classList.add('has-file');
+          area.innerHTML = `
+            <img src="${e.target.result}" class="file-preview" alt="Preview" style="max-height: 200px; width: auto;">
+            <div class="file-upload-text" style="color: var(--success); font-weight: 600; margin-top: 8px;">
+              ✅ ${input.files[0].name}
+            </div>
+          `;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    document.getElementById('formTambahBarang').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Validate image
+      const gambar = document.getElementById('gambarBarang').files;
+      if (!gambar.length) {
+        showToast('Upload gambar barang terlebih dahulu', 'error');
+        return;
+      }
+
+      // Read image as data URL for storage
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const listing = {
+          id: 'listing-' + Date.now(),
+          type: jenisTransaksi.value,
+          name: document.getElementById('namaBarang').value.trim(),
+          price: parseInt(document.getElementById('hargaBarang').value),
+          priceUnit: jenisTransaksi.value === 'sewa' ? '/ hari' : '',
+          category: document.getElementById('kategori').value,
+          location: document.getElementById('lokasi').value.trim(),
+          desc: document.getElementById('deskripsi').value.trim(),
+          image: ev.target.result,
+          cod: jenisTransaksi.value === 'preloved' ? document.getElementById('codToggle').checked : false,
+          condition: jenisTransaksi.value === 'preloved' ? document.getElementById('kondisi').value : null,
+          owner: AppUser.getName() || 'Anda',
+          status: 'pending', // Menunggu persetujuan admin
+          createdAt: new Date().toISOString()
+        };
+
+        // Save to localStorage
+        const listings = JSON.parse(localStorage.getItem('campusneed_seller_listings') || '[]');
+        listings.push(listing);
+        localStorage.setItem('campusneed_seller_listings', JSON.stringify(listings));
+
+        showToast('Barang berhasil diunggah! Menunggu persetujuan admin.', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'seller-dashboard.html';
+        }, 1500);
+      };
+      reader.readAsDataURL(gambar[0]);
+    });
+  </script>
+
+</body>
+</html>

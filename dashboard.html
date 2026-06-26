@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — CampusNeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard-style.css" />
+</head>
+<body>
+
+  <!-- Navbar (rendered by JS) -->
+  <div id="navbarMount"></div>
+
+  <div class="app-container">
+    <!-- Welcome Box -->
+    <div class="welcome-box" id="welcomeBox">
+      <h2 id="welcomeText">Selamat Datang di CampusNeed</h2>
+      <p>Marketplace khusus mahasiswa UIN Jakarta — sewa dan beli barang kampus dengan aman</p>
+    </div>
+
+    <!-- Tab Toggle: Sewa / Preloved -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+      <div class="tab-group">
+        <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">Semua</button>
+        <button class="tab-btn" data-tab="sewa" onclick="switchTab('sewa')">Sewa Barang</button>
+        <button class="tab-btn" data-tab="preloved" onclick="switchTab('preloved')">Beli Preloved</button>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="category-row" id="categoryRow">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Search Filter Bar (visible when on sewa tab) -->
+    <div class="filter-bar" id="radiusFilter" style="display: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <label>Urutkan berdasarkan jarak terdekat</label>
+      <span class="badge badge-blue" id="locationStatus">Mendeteksi lokasi...</span>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="productGrid">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- View more -->
+    <div style="text-align: center; margin-top: 16px;">
+      <a href="#" class="btn btn-outline" id="viewMoreBtn" style="display: none;" onclick="viewMore(event)">Lihat Semua Produk</a>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar (rendered by JS) -->
+  <div id="cartMount"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // State
+    let currentTab = 'all';
+    let currentCategory = 'all';
+    let userPosition = null;
+    let allProducts = [];
+
+    // Init
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Render navbar
+      document.getElementById('navbarMount').innerHTML = renderAppNavbar();
+      // Render cart sidebar
+      document.getElementById('cartMount').innerHTML = renderCartSidebar();
+
+      // Welcome text with user name
+      const userName = AppUser.getName();
+      if (userName) {
+        document.getElementById('welcomeText').textContent = `Halo, ${userName}!`;
+      }
+
+      // Render categories
+      renderCategories();
+
+      // Get user location
+      userPosition = await GeoLocation.getPosition();
+      const locStatus = document.getElementById('locationStatus');
+      if (userPosition) {
+        locStatus.textContent = 'Lokasi terdeteksi';
+        locStatus.className = 'badge badge-green';
+      }
+
+      // Load and render products
+      loadProducts();
+    });
+
+    function renderCategories() {
+      const container = document.getElementById('categoryRow');
+      container.innerHTML = Categories.map(cat => `
+        <div class="category-pill ${cat.id === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat.id}')">
+          <div class="category-pill-icon">${cat.icon}</div>
+          <div class="category-pill-label">${cat.label}</div>
+        </div>
+      `).join('');
+    }
+
+    function loadProducts() {
+      let products;
+      if (currentTab === 'all') {
+        products = ProductData.getAll();
+      } else {
+        products = ProductData.getByType(currentTab);
+      }
+
+      // Filter by category
+      if (currentCategory !== 'all') {
+        products = products.filter(p => p.category === currentCategory);
+      }
+
+      // Calculate distances
+      if (userPosition) {
+        products = products.map(p => ({
+          ...p,
+          distanceKm: GeoLocation.calcDistance(userPosition.lat, userPosition.lng, p.lat, p.lng)
+        }));
+
+        // Sort by distance (closest first) when on sewa tab
+        if (currentTab === 'sewa') {
+          products.sort((a, b) => a.distanceKm - b.distanceKm);
+        }
+      }
+
+      allProducts = products;
+      renderProducts(products);
+    }
+
+    function renderProducts(products) {
+      const grid = document.getElementById('productGrid');
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--slate-300)" stroke-width="1.5" style="margin-bottom: 12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <p style="color: var(--slate-500); font-size: 14px;">Tidak ada produk ditemukan</p>
+          </div>
+        `;
+        return;
+      }
+      grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      currentCategory = 'all';
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+
+      // Show/hide radius filter
+      document.getElementById('radiusFilter').style.display = tab === 'sewa' ? 'flex' : 'none';
+
+      // Update categories
+      renderCategories();
+      loadProducts();
+    }
+
+    function filterCategory(catId) {
+      currentCategory = catId;
+      renderCategories();
+      loadProducts();
+    }
+
+    // Global search handler
+    function onGlobalSearch(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        loadProducts();
+        return;
+      }
+      const filtered = allProducts.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.owner.toLowerCase().includes(q)
+      );
+      renderProducts(filtered);
+    }
+
+    function viewMore(e) {
+      e.preventDefault();
+      if (currentTab === 'sewa') {
+        window.location.href = 'sewa.html';
+      } else if (currentTab === 'preloved') {
+        window.location.href = 'preloved.html';
+      }
+    }
+  </script>
+
+</body>
+</html>
