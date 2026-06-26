@@ -87,12 +87,16 @@ function renderTeam() {
   if (!container) return;
 
   container.innerHTML = teamMembers.map((member, i) => {
+    const avatarContent = member.image
+      ? `<img src="${member.image}" alt="${member.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+      : member.initials;
+
     const avatarStyle = member.avatarColor
       ? `style="background: ${member.avatarColor};"`
       : "";
     return `
       <div class="team-card reveal" style="animation-delay: ${i * 0.15}s">
-        <div class="avatar" ${avatarStyle}>${member.initials}</div>
+        <div class="avatar" ${avatarStyle}>${avatarContent}</div>
         <h4>${member.name}</h4>
         <div class="nim">${member.nim}</div>
         <div class="uni">

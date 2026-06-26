@@ -198,6 +198,7 @@ const teamMembers = [
     prodi: "Teknik Informatika",
     fakultas: "Fakultas Sains dan Teknologi",
     univ: "UIN Syarif Hidayatullah Jakarta",
+    image: "images/aprilia.jpeg",
   },
   {
     initials: "RA",
@@ -207,6 +208,7 @@ const teamMembers = [
     prodi: "Teknik Informatika",
     fakultas: "Fakultas Sains dan Teknologi",
     univ: "UIN Syarif Hidayatullah Jakarta",
+    image: "images/revany.jpg",
   },
 ];
 
