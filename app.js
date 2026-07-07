@@ -7,9 +7,48 @@
  */
 
 // ===========================================================
-// CONSTANTS
+// CONSTANTS & THEME
 // ===========================================================
 const BIAYA_LAYANAN = 2500;
+
+const Theme = {
+  KEY: 'campusneed_theme',
+  
+  init() {
+    const saved = localStorage.getItem(this.KEY) || 'dark';
+    this.apply(saved);
+  },
+  
+  toggle() {
+    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    this.apply(next);
+  },
+  
+  apply(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem(this.KEY, theme);
+    this.updateIcon(theme);
+  },
+  
+  updateIcon(theme) {
+    const icons = document.querySelectorAll('.theme-icon');
+    icons.forEach(icon => {
+      if (theme === 'light') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    });
+  }
+};
+
+// Initialize theme early
+Theme.init();
 
 // ===========================================================
 // USER STATE
@@ -224,6 +263,10 @@ function renderAppNavbar(options = {}) {
       ` : ''}
 
       <div class="app-nav-actions">
+        <button class="app-nav-btn" onclick="Theme.toggle()" title="Toggle Theme">
+          <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        </button>
+
         <button class="app-nav-btn" onclick="toggleCart()" title="Keranjang" id="cartBtn">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span class="cart-badge" data-count="${cartCount}" style="${cartCount > 0 ? '' : 'display:none'}">${cartCount}</span>
@@ -585,10 +628,10 @@ const GeoLocation = {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
 };
@@ -700,7 +743,7 @@ const ProductData = {
   ],
 
   getAll() {
-    return [...this.sewa.map(p => ({...p, type: 'sewa'})), ...this.preloved.map(p => ({...p, type: 'preloved'}))];
+    return [...this.sewa.map(p => ({ ...p, type: 'sewa' })), ...this.preloved.map(p => ({ ...p, type: 'preloved' }))];
   },
 
   getById(id) {
@@ -709,8 +752,8 @@ const ProductData = {
 
   getByType(type) {
     return type === 'sewa'
-      ? this.sewa.map(p => ({...p, type: 'sewa'}))
-      : this.preloved.map(p => ({...p, type: 'preloved'}));
+      ? this.sewa.map(p => ({ ...p, type: 'sewa' }))
+      : this.preloved.map(p => ({ ...p, type: 'preloved' }));
   }
 };
 

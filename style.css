@@ -1,6 +1,6 @@
 /* ============================================================
    style.css — CampusNeed Landing Page
-   Palette: Biru Aesthetic Profesional + Gen Z Style
+   Palette: Glassmorphism — Dark Gradient + Glass Cards
    ============================================================ */
 
 *, *::before, *::after {
@@ -48,16 +48,92 @@
   --accent-purple: #FF823A;
   --accent-pink: #FF9557;
   --accent-teal: #003366;
+
+  /* Glassmorphism tokens */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-hover: rgba(255, 255, 255, 0.22);
+  --glass-blur: blur(16px);
+  --glass-blur-strong: blur(24px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.3);
+
+  /* Theme tokens */
+  --bg-gradient: linear-gradient(135deg, #000d1a 0%, #001a33 30%, #002244 60%, #001a33 100%);
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.45);
+  --nav-bg: rgba(0, 26, 51, 0.45);
+  --nav-bg-scrolled: rgba(0, 26, 51, 0.7);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --modal-bg: rgba(0, 26, 51, 0.85);
 }
+
+[data-theme="light"] {
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  
+  --nav-bg: rgba(255, 255, 255, 0.65);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.9);
+  --nav-border: rgba(0, 0, 0, 0.1);
+  --modal-bg: rgba(255, 255, 255, 0.85);
+  
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-bg-input: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border-hover: rgba(0, 0, 0, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  --glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] body::before {
+  background: 
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(51, 128, 179, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(255, 130, 58, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 60% 30%, rgba(0, 51, 102, 0.1) 0%, transparent 60%);
+  opacity: 0.7;
+}
+
+[data-theme="light"] .form-input, [data-theme="light"] .form-select, [data-theme="light"] .form-textarea {
+  color: var(--text-primary);
+}
+[data-theme="light"] .form-input::placeholder { color: var(--text-muted); }
+
 
 html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--slate-800);
-  background: var(--white);
+  color: var(--text-primary);
+  background: var(--bg-gradient);
   line-height: 1.6;
   overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Animated mesh gradient background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0, 77, 153, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(255, 130, 58, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 60% 30%, rgba(0, 51, 102, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+  animation: meshFloat 20s ease-in-out infinite alternate;
+}
+
+@keyframes meshFloat {
+  0%   { transform: scale(1)   translate(0, 0); }
+  50%  { transform: scale(1.05) translate(-2%, 3%); }
+  100% { transform: scale(1)   translate(2%, -2%); }
 }
 
 /* ============================================================
@@ -135,6 +211,12 @@ body {
   100% { transform: translateX(100%); }
 }
 
+@keyframes glassShine {
+  0% { opacity: 0; transform: translateX(-100%) rotate(15deg); }
+  50% { opacity: 0.08; }
+  100% { opacity: 0; transform: translateX(200%) rotate(15deg); }
+}
+
 /* Scroll Reveal Classes */
 .reveal {
   opacity: 0;
@@ -148,23 +230,24 @@ body {
 }
 
 /* ============================================================
-   NAVBAR
+   NAVBAR — Glassmorphism
    ============================================================ */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--nav-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  border-bottom: 1px solid var(--nav-border);
   z-index: 100;
   padding: 0 2rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 nav.scrolled {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid var(--slate-200);
+  background: var(--nav-bg-scrolled);
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .nav-inner {
@@ -193,7 +276,7 @@ nav.scrolled {
 .logo-text {
   font-size: 18px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
 }
 
@@ -211,7 +294,7 @@ nav.scrolled {
 .nav-links a {
   font-size: 14px;
   font-weight: 500;
-  color: var(--slate-600);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s;
   position: relative;
@@ -230,7 +313,7 @@ nav.scrolled {
 }
 
 .nav-links a:hover {
-  color: var(--blue-700);
+  color: var(--text-primary);
 }
 
 .nav-links a:hover::after {
@@ -266,34 +349,33 @@ nav.scrolled {
 }
 
 .btn-login-nav {
-  background: transparent !important;
-  color: var(--blue-800) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: white !important;
   padding: 10px 22px;
   border-radius: 12px;
-  border: 1.5px solid var(--slate-300);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   transition: all 0.3s !important;
   font-weight: 600;
+  backdrop-filter: blur(8px);
 }
 
 .btn-login-nav:hover {
   border-color: var(--orange-600) !important;
   color: var(--orange-600) !important;
-  background: var(--orange-50) !important;
+  background: rgba(255, 130, 58, 0.15) !important;
   transform: translateY(-2px);
 }
 
-.btn-login-nav::after {
-  display: none !important;
-}
+.btn-login-nav::after, .nav-links a.btn-nav::after { display: none !important; }
 
 /* ============================================================
-   HERO
+   HERO — Glassmorphism
    ============================================================ */
 .hero {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #001122 0%, #001a33 25%, #003366 60%, #004d80 100%);
+  background: var(--bg-gradient);
   background-size: 200% 200%;
   animation: gradient-shift 15s ease infinite;
   position: relative;
@@ -306,7 +388,7 @@ nav.scrolled {
   position: absolute;
   top: -200px; right: -200px;
   width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(255, 130, 58, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 130, 58, 0.15) 0%, transparent 70%);
   pointer-events: none;
   animation: float 8s ease-in-out infinite;
 }
@@ -316,7 +398,7 @@ nav.scrolled {
   position: absolute;
   bottom: -150px; left: -150px;
   width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(0, 51, 102, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 77, 153, 0.2) 0%, transparent 70%);
   pointer-events: none;
   animation: float 10s ease-in-out infinite reverse;
 }
@@ -348,7 +430,7 @@ nav.scrolled {
 .floating-shape {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.06;
+  opacity: 0.08;
   animation: float 6s ease-in-out infinite;
 }
 
@@ -393,9 +475,9 @@ nav.scrolled {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(139, 92, 246, 0.15);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  color: var(--blue-300);
+  background: rgba(255, 130, 58, 0.12);
+  border: 1px solid rgba(255, 130, 58, 0.25);
+  color: var(--orange-300);
   font-size: 13px;
   font-weight: 600;
   padding: 8px 18px;
@@ -409,7 +491,7 @@ nav.scrolled {
 .hero h1 {
   font-size: 56px;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
   line-height: 1.15;
   letter-spacing: -1.5px;
   margin-bottom: 2rem;
@@ -426,7 +508,7 @@ nav.scrolled {
 
 .hero p {
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   line-height: 1.7;
   margin-bottom: 2.5rem;
   max-width: 600px;
@@ -456,6 +538,7 @@ nav.scrolled {
   gap: 8px;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-primary::before {
@@ -476,23 +559,23 @@ nav.scrolled {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
   padding: 14px 28px;
   border-radius: 14px;
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+  border-color: var(--text-muted);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08);
 }
 
 .hero-stats-row {
@@ -519,7 +602,7 @@ nav.scrolled {
 .stat-item h3 {
   font-size: 36px;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
   background: linear-gradient(135deg, white, var(--orange-300));
   -webkit-background-clip: text;
@@ -529,17 +612,18 @@ nav.scrolled {
 
 .stat-item p {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   margin-bottom: 0;
   line-height: 1.4;
 }
 
 /* ============================================================
-   SECTIONS
+   SECTIONS — Glassmorphism
    ============================================================ */
 section {
   padding: 100px 2rem;
   position: relative;
+  z-index: 1;
 }
 
 .section-inner {
@@ -552,7 +636,7 @@ section {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--orange-600);
+  color: var(--orange-400);
   margin-bottom: 0.75rem;
   display: inline-flex;
   align-items: center;
@@ -564,7 +648,7 @@ section {
 .section-title {
   font-size: 40px;
   font-weight: 800;
-  color: var(--blue-800);
+  color: var(--text-primary);
   line-height: 1.15;
   letter-spacing: -1px;
   margin-bottom: 1rem;
@@ -572,16 +656,16 @@ section {
 
 .section-sub {
   font-size: 16px;
-  color: var(--slate-500);
+  color: var(--text-secondary);
   max-width: 580px;
   line-height: 1.7;
 }
 
 /* ============================================================
-   SECTION: MASALAH
+   SECTION: MASALAH — Glass Cards
    ============================================================ */
 .problem {
-  background: var(--slate-50);
+  background: transparent;
 }
 
 .problem-grid {
@@ -592,13 +676,16 @@ section {
 }
 
 .problem-card {
-  background: white;
-  border: 1px solid var(--slate-200);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 2rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .problem-card::before {
@@ -606,18 +693,35 @@ section {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--orange-600), var(--blue-600));
+  background: linear-gradient(90deg, var(--orange-600), var(--blue-400));
   opacity: 0;
   transition: opacity 0.4s;
 }
 
+/* Glass shine on hover */
+.problem-card::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.03), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
 .problem-card:hover {
-  border-color: var(--orange-300);
-  box-shadow: 0 20px 40px rgba(255, 130, 58, 0.1);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
   transform: translateY(-6px);
+  background: var(--glass-bg-hover);
 }
 
 .problem-card:hover::before {
+  opacity: 1;
+}
+
+.problem-card:hover::after {
   opacity: 1;
 }
 
@@ -630,7 +734,6 @@ section {
   justify-content: center;
   font-size: 20px;
   margin-bottom: 1rem;
-  color: var(--blue-600);
   transition: all 0.3s;
 }
 
@@ -638,28 +741,28 @@ section {
   transform: scale(1.1);
 }
 
-.problem-icon.p1 { background: var(--blue-50); }
-.problem-icon.p2 { background: var(--orange-50); color: var(--orange-600); }
-.problem-icon.p3 { background: #e0f2fe; }
+.problem-icon.p1 { background: rgba(0, 77, 153, 0.25); color: var(--blue-300); }
+.problem-icon.p2 { background: rgba(255, 130, 58, 0.2); color: var(--orange-400); }
+.problem-icon.p3 { background: rgba(51, 128, 179, 0.2); color: var(--blue-300); }
 
 .problem-card h3 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .problem-card p {
   font-size: 14px;
-  color: var(--slate-600);
+  color: var(--text-secondary);
   line-height: 1.65;
 }
 
 /* ============================================================
-   SECTION: FITUR (Modul Rent & Sell)
+   SECTION: FITUR (Modul Rent & Sell) — Glass Cards
    ============================================================ */
 .how {
-  background: white;
+  background: transparent;
 }
 
 .modules-wrap {
@@ -675,6 +778,8 @@ section {
   position: relative;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .module-card:hover {
@@ -682,20 +787,27 @@ section {
 }
 
 .module-card.rent {
-  background: linear-gradient(135deg, var(--blue-800), #001a33);
+  background: rgba(0, 51, 102, 0.35);
+  border: 1px solid rgba(0, 77, 153, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 26, 51, 0.4);
 }
 
 .module-card.rent:hover {
-  box-shadow: 0 24px 48px rgba(30, 58, 95, 0.4);
+  box-shadow: 0 24px 48px rgba(0, 26, 51, 0.5);
+  background: rgba(0, 51, 102, 0.45);
+  border-color: rgba(0, 77, 153, 0.5);
 }
 
 .module-card.sell {
-  background: var(--blue-50);
-  border: 1px solid var(--blue-200);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--glass-shadow);
 }
 
 .module-card.sell:hover {
-  box-shadow: 0 24px 48px rgba(37, 99, 235, 0.12);
+  box-shadow: var(--glass-shadow-hover);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-muted);
 }
 
 .module-tag {
@@ -717,8 +829,8 @@ section {
 }
 
 .module-card.sell .module-tag {
-  background: rgba(30, 58, 95, 0.1);
-  color: var(--blue-800);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
 }
 
 .module-card h3 {
@@ -729,8 +841,8 @@ section {
   line-height: 1.2;
 }
 
-.module-card.rent h3 { color: white; }
-.module-card.sell h3 { color: var(--blue-800); }
+.module-card.rent h3 { color: var(--text-primary); }
+.module-card.sell h3 { color: var(--text-primary); }
 
 .module-card > p {
   font-size: 14px;
@@ -738,8 +850,8 @@ section {
   margin-bottom: 1.5rem;
 }
 
-.module-card.rent > p { color: rgba(255, 255, 255, 0.65); }
-.module-card.sell > p { color: var(--slate-600); }
+.module-card.rent > p { color: var(--text-secondary); }
+.module-card.sell > p { color: var(--text-secondary); }
 
 .feature-list {
   list-style: none;
@@ -761,8 +873,8 @@ section {
   transform: translateX(4px);
 }
 
-.module-card.rent .feature-list li { color: rgba(255, 255, 255, 0.8); }
-.module-card.sell .feature-list li { color: var(--slate-600); }
+.module-card.rent .feature-list li { color: var(--text-secondary); }
+.module-card.sell .feature-list li { color: var(--text-secondary); }
 
 .check {
   width: 20px;
@@ -777,14 +889,14 @@ section {
   font-weight: 800;
 }
 
-.module-card.rent .check { background: linear-gradient(135deg, var(--orange-600), #e06b2a); color: white; }
-.module-card.sell .check { background: var(--blue-700); color: white; }
+.module-card.rent .check { background: linear-gradient(135deg, var(--orange-600), #e06b2a); color: var(--text-primary); }
+.module-card.sell .check { background: rgba(0, 77, 153, 0.6); color: var(--text-primary); }
 
 /* ============================================================
-   SECTION: KEAMANAN
+   SECTION: KEAMANAN — Glass Cards
    ============================================================ */
 .security {
-  background: var(--slate-50);
+  background: transparent;
 }
 
 .security-grid {
@@ -795,19 +907,23 @@ section {
 }
 
 .security-card {
-  background: white;
-  border: 1px solid var(--slate-200);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.75rem;
   display: flex;
   gap: 1rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .security-card:hover {
-  border-color: var(--blue-300);
-  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.08);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
   transform: translateY(-4px);
+  background: var(--glass-bg-hover);
 }
 
 .security-icon {
@@ -820,7 +936,7 @@ section {
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  color: white;
+  color: var(--text-primary);
   transition: transform 0.3s;
 }
 
@@ -831,21 +947,21 @@ section {
 .security-card h4 {
   font-size: 15px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--text-primary);
   margin-bottom: 0.4rem;
 }
 
 .security-card p {
   font-size: 13px;
-  color: var(--slate-600);
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 /* ============================================================
-   SECTION: USP
+   SECTION: USP — Glass Cards
    ============================================================ */
 .usp {
-  background: white;
+  background: transparent;
 }
 
 .usp-grid {
@@ -858,25 +974,30 @@ section {
 .usp-card {
   padding: 2rem;
   border-radius: 20px;
-  border: 1px solid var(--slate-200);
+  border: 1px solid var(--glass-border);
   position: relative;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .usp-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 130, 58, 0.02), rgba(0, 51, 102, 0.04));
+  background: linear-gradient(135deg, rgba(255, 130, 58, 0.03), rgba(0, 77, 153, 0.06));
   opacity: 0;
   transition: opacity 0.4s;
 }
 
 .usp-card:hover {
-  border-color: var(--blue-300);
-  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
   transform: translateY(-6px);
+  background: var(--glass-bg-hover);
 }
 
 .usp-card:hover::before {
@@ -886,7 +1007,7 @@ section {
 .usp-num {
   font-size: 48px;
   font-weight: 800;
-  color: var(--slate-100);
+  color: rgba(255, 255, 255, 0.06);
   position: absolute;
   top: 1rem;
   right: 1.25rem;
@@ -896,7 +1017,7 @@ section {
 }
 
 .usp-card:hover .usp-num {
-  color: var(--blue-100);
+  color: rgba(255, 255, 255, 0.1);
 }
 
 .usp-icon {
@@ -908,8 +1029,8 @@ section {
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--blue-50), rgba(255, 130, 58, 0.08));
-  color: var(--blue-600);
+  background: rgba(0, 77, 153, 0.25);
+  color: var(--blue-300);
   position: relative;
   z-index: 1;
   transition: transform 0.3s;
@@ -922,7 +1043,7 @@ section {
 .usp-card h3 {
   font-size: 18px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--text-primary);
   margin-bottom: 0.75rem;
   line-height: 1.3;
   position: relative;
@@ -931,21 +1052,23 @@ section {
 
 .usp-card p {
   font-size: 14px;
-  color: var(--slate-600);
+  color: var(--text-secondary);
   line-height: 1.65;
   position: relative;
   z-index: 1;
 }
 
 /* ============================================================
-   SECTION: ALUR / FLOW
+   SECTION: ALUR / FLOW — Glass
    ============================================================ */
 .flow {
-  background: linear-gradient(135deg, var(--blue-800) 0%, #001a33 100%);
+  background: rgba(0, 26, 51, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-.flow .section-title { color: white; }
-.flow .section-sub   { color: rgba(255, 255, 255, 0.6); }
+.flow .section-title { color: var(--text-primary); }
+.flow .section-sub   { color: var(--text-secondary); }
 .flow .section-label { color: var(--orange-400); }
 .flow .section-label::before { background: var(--orange-400); }
 
@@ -964,7 +1087,7 @@ section {
   left: calc(12.5% + 12px);
   right: calc(12.5% + 12px);
   height: 2px;
-  background: linear-gradient(90deg, rgba(255, 130, 58, 0.3), rgba(0, 51, 102, 0.3));
+  background: linear-gradient(90deg, rgba(255, 130, 58, 0.3), rgba(0, 77, 153, 0.3));
 }
 
 .flow-step {
@@ -989,7 +1112,7 @@ section {
   margin: 0 auto 1.25rem;
   position: relative;
   z-index: 1;
-  color: white;
+  color: var(--text-primary);
   transition: all 0.3s;
   box-shadow: 0 8px 24px rgba(255, 130, 58, 0.3);
 }
@@ -1002,21 +1125,21 @@ section {
 .flow-step h4 {
   font-size: 14px;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .flow-step p {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   line-height: 1.55;
 }
 
 /* ============================================================
-   SECTION: TIM
+   SECTION: TIM — Glass Cards
    ============================================================ */
 .team {
-  background: var(--slate-50);
+  background: transparent;
 }
 
 .team-grid {
@@ -1027,19 +1150,23 @@ section {
 }
 
 .team-card {
-  background: white;
-  border: 1px solid var(--slate-200);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 2.25rem;
   text-align: center;
   width: 280px;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .team-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
-  border-color: var(--blue-300);
+  box-shadow: var(--glass-shadow-hover);
+  border-color: var(--glass-border-hover);
+  background: var(--glass-bg-hover);
 }
 
 .avatar {
@@ -1052,7 +1179,7 @@ section {
   justify-content: center;
   font-size: 24px;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
   margin: 0 auto 1rem;
   transition: transform 0.3s;
 }
@@ -1064,37 +1191,41 @@ section {
 .team-card h4 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--blue-800);
+  color: var(--text-primary);
   margin-bottom: 3px;
 }
 
 .team-card .nim {
   font-size: 13px;
-  color: var(--slate-400);
+  color: var(--text-muted);
   font-weight: 500;
   margin-bottom: 0.75rem;
 }
 
 .team-card .uni {
   font-size: 12px;
-  color: var(--slate-600);
+  color: var(--text-secondary);
   line-height: 1.5;
-  border-top: 1px solid var(--slate-200);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 0.75rem;
   margin-top: 0.25rem;
 }
 
 /* ============================================================
-   SECTION: CTA
+   SECTION: CTA — Glassmorphism
    ============================================================ */
 .cta-section {
-  background: linear-gradient(135deg, var(--blue-800) 0%, var(--blue-700) 50%, var(--orange-600) 100%);
+  background: linear-gradient(135deg, rgba(0, 51, 102, 0.5) 0%, rgba(0, 64, 128, 0.4) 50%, rgba(255, 130, 58, 0.25) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   background-size: 200% 200%;
   animation: gradient-shift 12s ease infinite;
   text-align: center;
   padding: 100px 2rem;
   position: relative;
   overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .cta-section::before {
@@ -1118,7 +1249,7 @@ section {
 .cta-section h2 {
   font-size: 42px;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
   letter-spacing: -1px;
   margin-bottom: 1rem;
 }
@@ -1132,7 +1263,7 @@ section {
 
 .cta-section p {
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-secondary);
   margin-bottom: 2.5rem;
 }
 
@@ -1144,14 +1275,19 @@ section {
 }
 
 /* ============================================================
-   FOOTER
+   FOOTER — Glass
    ============================================================ */
 footer {
-  background: var(--slate-900);
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 13, 26, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
   padding: 2.5rem 2rem;
   text-align: center;
   font-size: 13px;
+  position: relative;
+  z-index: 1;
 }
 
 footer span {
@@ -1183,4 +1319,11 @@ footer span {
   .section-title    { font-size: 30px; }
   .cta-section h2   { font-size: 32px; }
   .stat-item h3     { font-size: 28px; }
+}
+
+/* Navbar Button Light Mode Overrides */
+[data-theme="light"] .btn-login-nav {
+  color: var(--text-primary) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
 }
